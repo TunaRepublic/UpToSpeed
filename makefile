@@ -1,2 +1,2 @@
 all:
-	g++ -o mk main.cpp options.h mode.h -lncurses
+	g++ -o uptospeed main.cpp options.h mode.h -lncurses
