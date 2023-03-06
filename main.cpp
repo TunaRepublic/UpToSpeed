@@ -158,13 +158,13 @@ int main() {
 
     // Initialize choice of colors
     bool color_avail = has_colors();
-    if (!color_avail) {
-        msg_str = "Note: This terminal does not support colors.\n\n";
-        print_msg(msg_str);
-    } else {
+    if (color_avail) {
         start_color();
         use_default_colors();
         init_pair(1,COLOR_RED,-1);
+    } else {
+        msg_str = "Note: This terminal does not support colors.\n\n";
+        print_msg(msg_str);
     }
 
     bool main_menu_restart = true;
