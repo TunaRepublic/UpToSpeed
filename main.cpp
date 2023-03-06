@@ -9,6 +9,8 @@
 #include "mode.h"
 #include "options.h"
 
+#define PROGRAM_NAME "UpToSpeed"
+
 #define N_LETTERS 26
 #define ERROR_CIRCLE "\u2B24"
 
@@ -144,6 +146,22 @@ int main() {
     initscr();
     noecho();
     cbreak();
+    
+    // Define string used to print messages on screen
+    string msg_str;
+
+    // Print welcome message
+    msg_str = "Welcome to ";
+    msg_str += PROGRAM_NAME;
+    msg_str += "!\n";
+    print_msg(msg_str);
+
+    // Initialize choice of colors
+    bool color_avail = has_colors();
+    if (!color_avail) {
+        msg_str = "Note: This terminal does not support colors.\n\n";
+        print_msg(msg_str);
+    }
     start_color();
     use_default_colors();
     init_pair(1,COLOR_RED,-1);
@@ -151,7 +169,7 @@ int main() {
     bool main_menu_restart = true;
     while (main_menu_restart) {
         // Selects the mode
-        print_msg("Welcome! Select a mode:\n");
+        print_msg("Please select a mode:\n");
         mode = (Mode) option_menu(mode_options,mode_options_len);
         clear();
 
@@ -170,7 +188,6 @@ int main() {
 
         int score = 0;
         chrono::milliseconds start_time, end_time;
-        string msg_str;
         const char *out_str;
         bool restart = true;
         while (restart) {
@@ -209,9 +226,13 @@ int main() {
                         string err_str;
                         err_str = ERROR_CIRCLE;
                         err_str += ' ';
-                        attron(COLOR_PAIR(1));
+                        if (color_avail) {
+                            attron(COLOR_PAIR(1));
+                        }
                         print_msg(err_str);
-                        attroff(COLOR_PAIR(1));
+                        if (color_avail) {
+                            attroff(COLOR_PAIR(1));
+                        }
                         print_msg(msg_str);
                         lett_input = getch();
                     }
