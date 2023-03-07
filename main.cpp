@@ -270,15 +270,17 @@ int main() {
 
             // Print the elapsed time and the typing frequency
             if (use_timer) {
-                double elapsed_time = ((end_time-start_time).count())/1000.;
+                float elapsed_time = ((end_time-start_time).count())/1000.;
                 msg_str = "Elapsed time: ";
-                msg_str += to_string(elapsed_time);
-                msg_str += " sec\n";
                 print_msg(msg_str);
-                double freq = n_rounds/elapsed_time;
+                printw("%.2f",elapsed_time);
+                msg_str = " sec\n";
+                print_msg(msg_str);
+                float freq = n_rounds/elapsed_time;
                 msg_str = "Typing frequency: ";
-                msg_str += to_string(freq);
-                msg_str += " lett/sec";
+                print_msg(msg_str);
+                printw("%.2f",freq);
+                msg_str = " lett/sec";
                 if (mode == PRACTICE) {
                     msg_str += " (only correct answers counted)\n";
                 } else if (mode == TEST) {
