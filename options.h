@@ -48,8 +48,6 @@ int option_menu(const char *options[],int n_options) {
     int highlight = 0;
     bool select = false;
     int c_in;
-
-    keypad(stdscr, TRUE);
     curs_set(0);
     while(1) {
         print_menu(highlight,options,n_options);
