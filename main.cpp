@@ -115,15 +115,18 @@ void print_msg(string msg_str) {
 void select_rounds(int *n_rounds) {
     char c_in;
     int num = 0;
+    int digit_count = 0;
     while (1) {
         c_in = getch();
         if (isdigit(c_in)) {
+            ++digit_count;
             printw("%c", c_in);
             num = 10*num + c_in - '0';
-        } else if (c_in == 127) { // If Delete is pressed, delete the previous character entered
-            //delch();
-            printw("%c", c_in);
-        } else if (c_in == 10) { // If Enter is pressed, finish reading the input
+        } else if (c_in == (char) KEY_BACKSPACE && digit_count) { // If Delete is pressed, delete the previous character entered
+            --digit_count;
+            num /= 10;
+            printw("\b \b");
+        } else if (c_in == 10 && num) { // If Enter is pressed, finish reading the input
             break;
         }
         refresh();
@@ -146,6 +149,7 @@ int main() {
     initscr();
     noecho();
     cbreak();
+    keypad(stdscr, TRUE);
     
     // Define string used to print messages on screen
     string msg_str;
@@ -176,9 +180,6 @@ int main() {
 
         // Select the number of rounds
         print_msg("Enter the number of rounds: ");
-        // echo();
-        // scanw("%d",&n_rounds);
-        // noecho();
         select_rounds(&n_rounds);
         clear();
 
