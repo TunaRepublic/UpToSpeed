@@ -145,6 +145,9 @@ int main() {
     // Generate a uniform distribution for the letters
     std::uniform_int_distribution<int> lett_dist(0,N_LETTERS-1);
 
+    // Generate a uniform distribution for lowercase-uppercase
+    std::uniform_int_distribution<int> low_upp_dist(0,1);
+
     // Initialize the ncurses window
     initscr();
     noecho();
@@ -183,6 +186,25 @@ int main() {
         select_rounds(&n_rounds);
         clear();
 
+        // Choose among lowercase, uppercase or both
+        print_msg("Choose the type of letters:");
+        int low_upp_selection = option_menu(low_upp_options,low_upp_options_len);
+        switch (low_upp_selection) {
+            case 3: // Case unsensistive
+                case_sens = false;
+                break;
+            case 2: // Both lowercase and uppercase
+                case_sens = true;
+                low_upp_both = true;
+                break;
+            default:
+                case_sens = true;
+                low_upp_both = false;
+                low_upp_case = low_upp_selection;
+                break;
+        }
+        clear();
+
         // Choose if timer is to be used
         print_msg("Use timer?\n");
         use_timer = !((bool) option_menu(timer_options,timer_options_len));
@@ -197,7 +219,21 @@ int main() {
             for (int round_i = 0; round_i < n_rounds; round_i++) {
                 // Select the letter
                 int lett_num = lett_dist(rng);
-                char lett = lett_num + 'A';
+                char lett;
+                if (!case_sens) {
+                    lett = lett_num + 'A';
+                } else if (low_upp_both) {
+                    bool lett_low_upp = low_upp_dist(rng);
+                    if (!lett_low_upp) {
+                        lett = lett_num + 'a';
+                    } else {
+                        lett = lett_num + 'A';
+                    }
+                } else if (!low_upp_case) {
+                    lett = lett_num + 'a';
+                } else {
+                    lett = lett_num + 'A';
+                }
 
                 // Retrieve the correct hand to use
                 char hand_char = hand[lett_num] ? 'R' : 'L';
@@ -223,7 +259,10 @@ int main() {
 
                 // If mode==PRACTICE and the answer is wrong, display an error circle and keep checking the user input until the answer is correct.
                 if (mode == PRACTICE) {
-                    while (lett_input != lett && lett_input-'a'+'A' != lett) {
+                    while (lett_input != lett) {
+                        if (!case_sens && (lett_input-'a'+'A' == lett || lett_input-'A'+'a' == lett)) {
+                            break;
+                        }
                         clear();
                         string err_str;
                         err_str = ERROR_CIRCLE;
