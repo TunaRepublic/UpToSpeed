@@ -6,6 +6,13 @@ const char *mode_options[] = {
         "Test"
 };
 int mode_options_len = sizeof(mode_options)/sizeof(char *);
+const char *low_upp_options[] = {
+        "Lowercase",
+        "Uppercase",
+        "Both",
+        "Case unsensitive"
+};
+int low_upp_options_len = sizeof(low_upp_options)/sizeof(char *);
 const char *timer_options[] = {
         "Yes",
         "No"
