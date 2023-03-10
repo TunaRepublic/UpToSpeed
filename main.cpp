@@ -285,7 +285,11 @@ int main() {
                 }
 
                 // If mode==TEST, check if answer is correct and update the score
-                if (lett_input == lett || lett_input-'a'+'A' == lett) {
+                if (lett_input != lett) {
+                    if (!case_sens && (lett_input-'a'+'A' == lett || lett_input-'A'+'a' == lett)) {
+                        ++score;
+                    }
+                } else {
                     ++score;
                 }
 
