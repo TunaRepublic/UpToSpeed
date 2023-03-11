@@ -242,7 +242,7 @@ int main() {
                 // Retrieve the correct hand to use
                 char hand_char = hand[lett_num] ? 'R' : 'L';
 
-                // Prints the question
+                // Print the question
                 clear();
                 msg_str = lett;
                 msg_str += " (";
