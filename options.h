@@ -38,8 +38,7 @@ void print_menu(int highlight, const char *options[], int n_options)
             attroff(A_REVERSE);
             x += strlen(options[i]);
             mvprintw(y,x,"]");
-        }
-        else {
+        } else {
             mvprintw(y,x,"[");
             ++x;
             mvprintw(y, x, "%s", options[i]);
@@ -62,16 +61,18 @@ int option_menu(const char *options[],int n_options,bool exit_avail) {
         c_in = getch();
         switch(c_in) {
             case KEY_LEFT: // Left arrow key
-                if(!highlight)
+                if(!highlight) {
                     highlight = n_options-1;
-                else
+                } else {
                     --highlight;
+                }
                 break;
             case KEY_RIGHT: // Right arrow key
-                if(highlight == n_options-1)
+                if(highlight == n_options-1) {
                     highlight = 0;
-                else 
+                } else { 
                     ++highlight;
+                }
                 break;
             case 10: // Enter key
                 select = true;
