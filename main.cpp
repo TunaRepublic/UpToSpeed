@@ -180,7 +180,7 @@ int main() {
 
     bool main_menu_restart = true;
     while (main_menu_restart) {
-        // Selects the mode
+        // Select the mode
         print_msg("Please select a mode:\n");
         mode = (Mode) option_menu(mode_options,mode_options_len,true);
         clear();
