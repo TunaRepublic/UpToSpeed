@@ -344,7 +344,7 @@ int main() {
                 "Exit"
             };
             int final_options_len = sizeof(final_options)/sizeof(char *);
-            int option_choice = option_menu(final_options,final_options_len,false);
+            int option_choice = option_menu(final_options,final_options_len,true);
             if (!option_choice) {
                 restart = true;
             } else if (option_choice == 1) {
