@@ -159,8 +159,12 @@ int main() {
 
     // Print welcome message
     msg_str = "Welcome to ";
-    msg_str += PROGRAM_NAME;
-    msg_str += "!\n";
+    print_msg(msg_str);
+    msg_str = PROGRAM_NAME;
+    attron(A_BOLD);
+    print_msg(msg_str);
+    attroff(A_BOLD);
+    msg_str = "! Press Q to exit.\n";
     print_msg(msg_str);
 
     // Initialize choice of colors
@@ -178,7 +182,7 @@ int main() {
     while (main_menu_restart) {
         // Selects the mode
         print_msg("Please select a mode:\n");
-        mode = (Mode) option_menu(mode_options,mode_options_len);
+        mode = (Mode) option_menu(mode_options,mode_options_len,true);
         clear();
 
         // Select the number of rounds
@@ -188,7 +192,7 @@ int main() {
 
         // Choose among lowercase, uppercase or both
         print_msg("Choose the type of letters:");
-        int low_upp_selection = option_menu(low_upp_options,low_upp_options_len);
+        int low_upp_selection = option_menu(low_upp_options,low_upp_options_len,false);
         switch (low_upp_selection) {
             case 3: // Case unsensistive
                 case_sens = false;
@@ -207,7 +211,7 @@ int main() {
 
         // Choose if timer is to be used
         print_msg("Use timer?\n");
-        use_timer = !((bool) option_menu(timer_options,timer_options_len));
+        use_timer = !((bool) option_menu(timer_options,timer_options_len,false));
         clear();
 
         int score = 0;
@@ -340,7 +344,7 @@ int main() {
                 "Exit"
             };
             int final_options_len = sizeof(final_options)/sizeof(char *);
-            int option_choice = option_menu(final_options,final_options_len);
+            int option_choice = option_menu(final_options,final_options_len,false);
             if (!option_choice) {
                 restart = true;
             } else if (option_choice == 1) {
