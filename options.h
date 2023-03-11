@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <cstring>
 #include <ncurses.h>
 
@@ -51,7 +52,7 @@ void print_menu(int highlight, const char *options[], int n_options)
 }
 
 // Prints the menu with options given in the array options[]
-int option_menu(const char *options[],int n_options) {
+int option_menu(const char *options[],int n_options,bool exit_avail) {
     int highlight = 0;
     bool select = false;
     int c_in;
@@ -75,6 +76,16 @@ int option_menu(const char *options[],int n_options) {
             case 10: // Enter key
                 select = true;
                 break;
+            case 'q':
+                if (exit_avail) {
+                    endwin();
+                    exit(EXIT_SUCCESS);
+                }
+            case 'Q':
+                if (exit_avail) {
+                    endwin();
+                    exit(EXIT_SUCCESS);
+                }
         }
         // Exit the loop if the user has selected an option
         if (select) {
