@@ -81,11 +81,13 @@ int option_menu(const char *options[],int n_options,bool exit_avail) {
                     endwin();
                     exit(EXIT_SUCCESS);
                 }
+                break;
             case 'Q':
                 if (exit_avail) {
                     endwin();
                     exit(EXIT_SUCCESS);
                 }
+                break;
         }
         // Exit the loop if the user has selected an option
         if (select) {
