@@ -306,6 +306,15 @@ int main() {
 
             clear();
 
+            // Print end message
+            if (mode == TEST) {
+                msg_str = "Test";
+            } else if (mode == PRACTICE) {
+                msg_str = "Practice";
+            }
+            msg_str += " completed!\n\n";
+            print_msg(msg_str); 
+
             // Print the score if mode==TEST
             if (mode == TEST) {
                 msg_str = "Score: ";
