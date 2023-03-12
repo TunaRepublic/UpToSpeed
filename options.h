@@ -28,7 +28,7 @@ void print_menu(int highlight, const char *options[], int n_options)
     int x, y, i;	
 
     x = 5;
-    y = 5;
+    y = 6;
     for(i = 0; i < n_options; ++i) {
         if(i == highlight) {
             mvprintw(y,x,"[");
