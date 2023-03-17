@@ -3,6 +3,10 @@
 #include <string>
 #include <cstring>
 #include <ctype.h>
+#include <fstream>
+#include <filesystem>
+#include <pwd.h>
+#include <unistd.h>
 #include "pcg/pcg_random.hpp"
 #include <chrono>
 #include <ncurses.h>
@@ -10,9 +14,10 @@
 #include "options.h"
 
 #define PROGRAM_NAME "UpToSpeed"
-
 #define N_LETTERS 26
 #define ERROR_CIRCLE "\u2B24"
+#define HIGH_SCORE_DIR_NAME ".uptospeed"
+#define HIGH_SCORE_FILENAME "highscore.txt"
 
 using namespace std;
 
@@ -315,14 +320,137 @@ int main() {
             msg_str += " completed!\n\n";
             print_msg(msg_str); 
 
-            // Print the score if mode==TEST
+            // Print the score and the high score if mode==TEST
             if (mode == TEST) {
                 msg_str = "Score: ";
                 msg_str += to_string(score);
                 msg_str += '/';
                 msg_str += to_string(n_rounds);
-                msg_str += '\n';
                 print_msg(msg_str);
+
+                // Put the cache directory in the user's home directory
+                const char *highscore_dir_parent = ".";
+                if (!(highscore_dir_parent = getenv("HOME"))) {
+                    highscore_dir_parent = getpwuid(getuid())->pw_dir;
+                }
+
+                string highscore_dir_path = highscore_dir_parent;
+                highscore_dir_path += "/";
+                highscore_dir_path += HIGH_SCORE_DIR_NAME;
+                string highscore_file_path = highscore_dir_path;
+                highscore_file_path += "/";
+                highscore_file_path += HIGH_SCORE_FILENAME;
+
+                bool dir_fail = false;
+
+                // Create the cache directory
+                try {
+                    if (filesystem::is_directory(highscore_dir_parent)) {
+                        if (!filesystem::is_directory(highscore_dir_path)) {
+                            ifstream test_dir(highscore_dir_path);
+                            if (test_dir) {
+                                test_dir.close();
+                                dir_fail = true;
+                                msg_str = " (Error: can't create directory ";
+                                msg_str += highscore_dir_path;
+                                msg_str += " because a file of the same name already exists)\n";
+                                if (color_avail) {
+                                    attron(COLOR_PAIR(1));
+                                }
+                                print_msg(msg_str);
+                                if (color_avail) {
+                                    attroff(COLOR_PAIR(1));
+                                }
+                            } else {
+                                test_dir.close();
+                                filesystem::create_directory(highscore_dir_path);
+                            }
+                        }
+                    } else {
+                        dir_fail = true;
+                        msg_str = " (Error: can't find directory ";
+                        msg_str += highscore_dir_parent;
+                        msg_str += " to create the high score file ";
+                        msg_str += highscore_file_path;
+                        msg_str += ")\n";
+                        if (color_avail) {
+                            attron(COLOR_PAIR(1));
+                        }
+                        print_msg(msg_str);
+                        if (color_avail) {
+                            attroff(COLOR_PAIR(1));
+                        }
+                    }
+                }
+                catch (filesystem::filesystem_error& err) {
+                    dir_fail = true;                    
+                    msg_str = " (Error: can't read/write in directory ";
+                    msg_str += highscore_dir_path;
+                    msg_str += " to use the high score file ";
+                    msg_str += HIGH_SCORE_FILENAME;
+                    msg_str += ")\n";
+                    if (color_avail) {
+                        attron(COLOR_PAIR(1));
+                    }
+                    print_msg(msg_str);
+                    if (color_avail) {
+                        attroff(COLOR_PAIR(1));
+                    }
+                }
+
+                // Access or create the high score file
+                if (!dir_fail) {
+                    fstream highscore_file(highscore_file_path, fstream::in | fstream::out | fstream::app);
+                    if (highscore_file) {
+                        int high_score;
+                        string high_score_str;
+                        if (filesystem::is_empty(highscore_file_path)) {
+                            highscore_file << 0 << endl;
+                            highscore_file.seekg(0);
+                        }  
+                        getline(highscore_file,high_score_str);
+                        high_score = stoi(high_score_str);
+                        // Update the score
+                        if (score > high_score) {
+                            highscore_file.close();
+                            highscore_file.open(highscore_file_path, fstream::out);
+                            if (highscore_file) {
+                                high_score = score;
+                                highscore_file << high_score << endl;
+                                msg_str = " (New high score!)\n";
+                                print_msg(msg_str);
+                            } else {
+                                msg_str = " (Error: could not write to the high score file ";
+                                msg_str += highscore_file_path;
+                                msg_str += ")\n";
+                                if (color_avail) {
+                                    attron(COLOR_PAIR(1));
+                                }
+                                print_msg(msg_str);
+                                if (color_avail) {
+                                    attroff(COLOR_PAIR(1));
+                                }
+                            }
+                        } else {
+                            msg_str = " (High score: ";
+                            msg_str += to_string(high_score);
+                            msg_str += ")\n";
+                            print_msg(msg_str);
+                        }
+                        highscore_file.close();
+                    } else {
+                        msg_str = " (Error: could not access or create the high score file ";
+                        msg_str += highscore_file_path;
+                        msg_str += ")\n";
+                        if (color_avail) {
+                            attron(COLOR_PAIR(1));
+                        }
+                        print_msg(msg_str);
+                        if (color_avail) {
+                            attroff(COLOR_PAIR(1));
+                        }      
+                    }
+                }
             }
 
             // Print the elapsed time and the typing frequency
